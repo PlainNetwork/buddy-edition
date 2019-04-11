@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic:400,700&amp;subset=korean" rel="stylesheet">
+    <title>Buddy Edition</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #D45 0%, #F67 100%);
+            font-family: 'Nanum Gothic', sans-serif;
+        }
+        .site-title-banner {
+            color: white;
+            font-size: 64px;
+        }
+        html {
+            height: 100%;
+        }
+
+        .container {
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+            display: block;
+            position: absolute;
+            max-width: 225px;
+        }
+
+        h1 {
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 42px;
+            margin: 0;
+            line-height: 47px;
+            letter-spacing: 2px;
+        }
+
+        .title {
+            transform: translateX(-50%) rotate(-10deg);
+            display: block;
+            float: left;
+            left: 50%;
+            position: relative;
+        }
+        .title span {
+            transform: skew(-10deg);
+            display: block;
+            float: left;
+            text-shadow: #533d4a 1px 1px, #533d4a 2px 2px, #533d4a 3px 3px, #533d4a 4px 4px, #533d4a 5px 5px, #533d4a 6px 6px;
+            min-width: 10px;
+            min-height: 10px;
+            position: relative;
+        }
+
+        .title:nth-child(1) {
+            color: #fff;
+        }
+        .title:nth-child(2) {
+            color: #fff;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lettering.js/0.7.0/jquery.lettering.min.js"></script>
+  </head>
+  <body>
+    <section class="container">
+        <h1>
+            <span class="title">Buddy</span>
+            <span class="title">Edition</span>
+        </h1>
+    </section>
+    <script>
+        $(document).ready(function () {
+            $(".title").lettering();
+        });
+
+
+
+
+
+        $(document).ready(function () {
+            animation();
+        }, 1000);
+
+        function animation() {
+            var title1 = new TimelineMax();
+            title1.staggerFromTo(".title span", 0.5,
+                { ease: Back.easeOut.config(1.7), opacity: 0, bottom: -80 },
+                { ease: Back.easeOut.config(1.7), opacity: 1, bottom: 0 }, 0.05);
+        }
+    </script>
+  </body>
+</html>
