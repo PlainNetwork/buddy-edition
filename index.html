@@ -439,7 +439,7 @@
             (history.records).forEach(row => {
                 if (row.type == "payment") {
                     var $div = $("<div/>", {
-                        "class":`history-row ${moment(row.created_at).diff(moment(), "minutes") > -1 ? "hot" : ""}`,
+                        "class":`history-row ${moment(row.created_at).diff(moment(), "minutes") >= -1 ? "hot" : ""}`,
                     });
                     $div.html([
                         $("<span>", {"class":""}).text('Payment'),
