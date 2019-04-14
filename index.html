@@ -513,7 +513,7 @@
             $("#message").lettering();
             const tm1 = new TimelineMax({
                 onComplete: function() {
-                    $("#message").delay(1000).fadeOut(500);
+                    $("#message").delay(2000).fadeOut(500);
                 }
             }).staggerFromTo("#message span", 0.5,
                 { ease: Back.easeOut.config(1.7), opacity: 0, bottom: -80 },
