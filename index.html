@@ -76,6 +76,17 @@
             font-size: 24px;
         }
 
+        #message span {
+            transform: skew(-10deg);
+            display: block;
+            float: left;
+            text-shadow: #533d4a 1px 1px, #533d4a 2px 2px, #533d4a 3px 3px, #533d4a 4px 4px, #533d4a 5px 5px, #533d4a 6px 6px;
+            min-width: 10px;
+            min-height: 10px;
+            position: relative;
+            color: white;
+        }
+
         #login {
             display: inline-block;
             width: 320px;
@@ -89,6 +100,7 @@
         }
         form  {
             line-height: 40px;
+            position: relative;
         }
         .input-group {
             margin-bottom: 10px;
@@ -219,6 +231,15 @@
             margin-left: 5px;
             margin-right: 5px;
         }
+        #message {
+            color: white;
+            font-size: 24px;
+            padding-top: 48px;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
@@ -241,23 +262,23 @@
         <div class="left-form">
             <form name="account-demo-1" class="">
                 <div class="input-group">
-                    <button type="button" onclick="transferFromTo(config.bank, [[config.user, '1000']])">USER DEPOSIT</button>
+                    <button type="button" onclick="transferFromTo(config.bank, [[config.user, '1000']], undefined, 'Deposit success.')">USER DEPOSIT</button>
                 </div>
                 <div class="input-group ep-row">
                     <img src="img/ep01.png"/>
-                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00001', true)">
+                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00001', 'Episode 1 purchase success.')">
                         USER PAYMENT 1화
                     </button>
                 </div>
                 <div class="input-group ep-row">
                     <img src="img/ep02.png"/>
-                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00002', true)">
+                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00002', 'Episode 2 purchase success.')">
                         USER PAYMENT 2화
                     </button>
                 </div>
                 <div class="input-group ep-row">
                     <img src="img/ep03.png"/>
-                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00002', true)">
+                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00002', 'Episode 3 purchase success.')">
                         USER PAYMENT 3화
                     </button>
                 </div>
@@ -282,6 +303,9 @@
                 <div class="input-group">
                     <button type="button" onclick="initAccounts()">INITIALIZE</button>
                 </div>
+            </form>
+            <form name="account-demo-3" class="">
+                <div id="message"></div>
             </form>
         </div>
         <div class="right-form">
@@ -324,7 +348,7 @@
             await refreshBlockchain();
             console.log("ready blockchain");
         }
-        async function transferFromTo(from, ammounts, memo, openAfter) {
+        async function transferFromTo(from, ammounts, memo, message) {
             if ($("#mask .container").lock()) {
                 return false;
             }
@@ -341,13 +365,14 @@
                 transfer(builder, from.id, to[0].id, to[1])
             })
             if (funded > Number(findBalance(from).balance)) {
-                alert("잔고가 모자랍니다. 결제 후 이용해주세요.");
+                animationMessage("Not enough money to pay.");
                 await refreshBlockchain();
                 return;
             }
             const tx = builder.setTimeout(100).build();
             tx.sign(config.bankKey)
             const response = await config.server.submitTransaction(tx);
+            animationMessage(message);
             await refreshBlockchain();
         }
         async function initAccounts() {
@@ -383,6 +408,7 @@
             const tx = builder.setTimeout(100).build();
             tx.sign(config.bankKey)
             await config.server.submitTransaction(tx);
+            animationMessage("All Accounts are initialized to zero.");
             await refreshBlockchain();
         }
         async function refreshBlockchain() {
@@ -474,6 +500,19 @@
                     $("#mask").removeClass("on");
                 }
             }).staggerFromTo(".title span", 0.5,
+                { ease: Back.easeOut.config(1.7), opacity: 0, bottom: -80 },
+                { ease: Back.easeOut.config(1.7), opacity: 1, bottom: 0 }, 0.05);
+        }
+
+        function animationMessage(message) {
+            $("#message").stop().show();
+            $("#message").text(message);
+            $("#message").lettering();
+            const tm1 = new TimelineMax({
+                onComplete: function() {
+                    $("#message").delay(1000).fadeOut(500);
+                }
+            }).staggerFromTo("#message span", 0.5,
                 { ease: Back.easeOut.config(1.7), opacity: 0, bottom: -80 },
                 { ease: Back.easeOut.config(1.7), opacity: 1, bottom: 0 }, 0.05);
         }
