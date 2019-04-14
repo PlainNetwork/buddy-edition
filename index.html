@@ -215,6 +215,10 @@
             margin-left: 5px;
             margin-right: 5px;
         }
+        .payment-at {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
@@ -418,10 +422,15 @@
                         $("<span>", {"class":""}).text('to'),
                         $("<a>", {
                             "class":"payment-to",
-                            "href":`https://stellar.expert/explorer/testnet/tx/${row.transaction_hash}`,
+                            "href":`https://stellar.expert/explorer/testnet/account/${row.to}`,
                             "target":"_blank"
                         }).text(`${row.to.substr(0, 3)}...${row.to.substr(-3, 3)}`),
-                         $("<span>", { "class": "" }).text(moment(row.created_at).fromNow())
+                        $("<span>", { "class": "" }).text('at'),
+                        $("<a>", {
+                            "class": "payment-at",
+                            "href": `https://stellar.expert/explorer/testnet/tx/${row.transaction_hash}`,
+                            "target": "_blank"
+                        }).text(moment(row.created_at).fromNow())
                     ]);
                     $div.appendTo($("#history"));
                 }
