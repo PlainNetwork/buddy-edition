@@ -18,14 +18,26 @@
         html {
             height: 100%;
         }
-
-        .container {
+        #mask {
+            background: linear-gradient(to bottom, #D45 0%, #F67 100%);
+            z-index: 1000;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+        #mask .container {
+            transition: transform .5s;
             transform: translate(-50%, -50%);
             top: 50%;
             left: 50%;
             display: block;
             position: absolute;
             max-width: 225px;
+        }
+        #mask.on .container {
+            opacity: 1 !important;
         }
 
         h1 {
@@ -60,34 +72,399 @@
         .title:nth-child(2) {
             color: #fff;
         }
+        .title:nth-child(3) {
+            font-size: 24px;
+        }
+
+        #login {
+            display: inline-block;
+            width: 320px;
+            height: 320px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+        }
+        form  {
+            line-height: 40px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        label  {
+            box-sizing: border-box;
+            color: white;
+            vertical-align: top;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            display: inline-block;
+            font-weight: bold;
+        }
+        button {
+            box-sizing: border-box;
+            font-size: 24px;
+            height: 36px;
+            line-height: 30px;
+            width: 100%;
+            background: transparent;
+            border: 3px dashed white;
+            padding: 0 6px;
+            vertical-align: top;
+            outline: none;
+            color: white;
+        }
+        input[type=text],
+        input[type=password] {
+            box-sizing: border-box;
+            font-size: 24px;
+            height: 36px;
+            line-height: 36px;
+            width: 70%;
+            background: transparent;
+            border: 3px dashed white;
+            padding: 0 6px;
+            vertical-align: top;
+            outline: none;
+            color: white;
+        }
+        .wait-lock {
+            opacity: 0.8;
+            -webkit-animation: flash linear 1s infinite;
+            animation: flash linear 1s infinite;
+        }
+        @-webkit-keyframes flash {
+            0% { opacity: 0.8; }
+            50% { opacity: 0.2; }
+            100% { opacity: 0.8; }
+        }
+        @keyframes flash {
+            0% { opacity: 0.8; }
+            50% { opacity: 0.2; }
+            100% { opacity: 0.8; }
+        }
+        .balance img{
+            height: 20px;
+            line-height: 20px;
+            margin-top: 5px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .balance span {
+            font-size: 24px;
+            line-height: 30px;
+            margin-right: 5px;
+        }
+        .ep-row img {
+            height: 70px;
+        }
+        .ep-row button {
+            height: 70px;
+        }
+        #action {
+            display: flex;
+            height: 100%;
+        }
+        .left-form {
+            width: 40%;
+            padding: 10px;
+            overflow: auto;
+        }
+        .right-form {
+            width: 60%;
+            padding: 10px;
+            background-color: #68CAC4;
+            overflow: auto;
+        }
+        #history {
+            display: flex;
+            flex-direction: column;
+        }
+        .history-row {
+            color: white;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px dashed white;
+            border-bottom: 0;
+        }
+        .history-row:last-of-type {
+            border-bottom: 3px dashed white;
+        }
+        body {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        .history-row a {
+            color: white !important;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .payment-asset {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+        .payment-to {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lettering.js/0.7.0/jquery.lettering.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/0.15.0/stellar-sdk.js"></script>
+    <script src="./js/tmpl.js"></script>
   </head>
   <body>
-    <section class="container">
-        <h1>
-            <span class="title">Buddy</span>
-            <span class="title">Edition</span>
-        </h1>
-    </section>
+    <div id="mask">
+        <section class="container">
+            <h1 id="title">
+                <span class="title">Buddy</span>
+                <span class="title">Edition</span>
+                <span class="title">In Loading...</span>
+            </h1>
+        </section>
+    </div>
+    <div id="action" class="show">
+        <div class="left-form">
+            <form name="account-demo-1" class="">
+                <div class="input-group">
+                    <button type="button" onclick="transferFromTo(config.bank, [[config.user, '1000']])">USER DEPOSIT</button>
+                </div>
+                <div class="input-group ep-row">
+                    <img src="img/ep01.png"/>
+                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00001', true)">
+                        USER PAYMENT 1화
+                    </button>
+                </div>
+                <div class="input-group ep-row">
+                    <img src="img/ep02.png"/>
+                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00002', true)">
+                        USER PAYMENT 2화
+                    </button>
+                </div>
+                <div class="input-group ep-row">
+                    <img src="img/ep03.png"/>
+                    <button type="button" onclick="transferFromTo(config.user, [[config.publisher, '40'], [config.share, '50'], [config.platform, '10']], '000000000001-00002', true)">
+                        USER PAYMENT 3화
+                    </button>
+                </div>
+            </form>
+            <form name="account-demo-2" class="">
+                <div class="input-group balance" id="user">
+                    <label>USER</label>
+                    <label><span></span><img src="http://liquid.plain.network/.well-known/krw.png"></label>
+                </div>
+                <div class="input-group balance" id="publisher">
+                    <label>SHARE 1</label>
+                    <label><span></span><img src="http://liquid.plain.network/.well-known/krw.png"></label>
+                </div>
+                <div class="input-group balance" id="share">
+                    <label>SHARE 2</label>
+                    <label><span></span><img src="http://liquid.plain.network/.well-known/krw.png"></label>
+                </div>
+                <div class="input-group balance" id="platform">
+                    <label>PLATFORM</label>
+                    <label><span></span><img src="http://liquid.plain.network/.well-known/krw.png"></label>
+                </div>
+                <div class="input-group">
+                    <button type="button" onclick="initAccounts()">INITIALIZE</button>
+                </div>
+            </form>
+        </div>
+        <div class="right-form">
+            <div id="history"></div>
+        </div>
+    </div>
     <script>
         $(document).ready(function () {
             $(".title").lettering();
+            animation();
+            setTimeout(function() {
+                readyForBlockchain();
+            }, 500);
         });
 
+        const config = {};
+        StellarSdk.Network.useTestNetwork();
+        async function readyForBlockchain() {
+            config.server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+            config.asset = new StellarSdk.Asset("KRWC", "GB342SLAOH2V4TSHB5I3VF7KEFOFYKRRLOUZYKEC6LE5B6RC2GCHRUD2");
 
+            config.bankKey = StellarSdk.Keypair.fromSecret("SABB3D24TC6XMUF5FVQTQDKFUDLXZDYLV46NDPRWG5LOINU3YC4KWJGR");
+            config.platformKey = StellarSdk.Keypair.fromSecret("SBZAR2GTUEZINOGXLJYAXHAV4TR5FL4LZYFQC2BVQ4XC45MQMY6ZQGTQ");
+            config.userKey = StellarSdk.Keypair.fromSecret("SBZMJ65CTXNGGNGG3IY4YXATXC3UGCY4BH7DFBUTCITE6V3YRWRZTNPY");
+            config.publisherKey = StellarSdk.Keypair.fromSecret("SC5323USWFN42AZRUN4BOYYJV6H5HQHKGISC7QU5TXXQJESLAKVHO7BH");
+            config.shareKey = StellarSdk.Keypair.fromSecret("SCS6YUAAWYIHD7BX3GCJOUNA5ZHD5CT6KIXVWN6HO5Z6GT4NIQXPG2VO");
+            config.fee = await config.server.fetchBaseFee();
+            $("#platform").on('click', function () {
+                window.open(`https://stellar.expert/explorer/testnet/account/${config.platformKey.publicKey()}`);;
+            })
+            $("#user").on('click', function () {
+                window.open(`https://stellar.expert/explorer/testnet/account/${config.userKey.publicKey()}`);;
+            })
+            $("#publisher").on('click', function () {
+                window.open(`https://stellar.expert/explorer/testnet/account/${config.publisherKey.publicKey()}`);;
+            })
+            $("#share").on('click', function () {
+                window.open(`https://stellar.expert/explorer/testnet/account/${config.shareKey.publicKey()}`);;
+            })
+            await refreshBlockchain();
+            console.log("ready blockchain");
+        }
+        async function transferFromTo(from, ammounts, memo, openAfter) {
+            if ($("#mask .container").lock()) {
+                return false;
+            }
+            $("#mask").show();
+            const builder = new StellarSdk.TransactionBuilder(config.bank, {
+                fee: config.fee,
+            })
+            if (memo) {
+                builder.addMemo(new StellarSdk.Memo("text", memo));
+            }
+            let funded = 0;
+            ammounts.forEach(function(to) {
+                funded += Number(to[1]);
+                transfer(builder, from.id, to[0].id, to[1])
+            })
+            if (funded > Number(findBalance(from).balance)) {
+                alert("잔고가 모자랍니다. 결제 후 이용해주세요.");
+                await refreshBlockchain();
+                return;
+            }
+            const tx = builder.setTimeout(100).build();
+            tx.sign(config.bankKey)
+            const response = await config.server.submitTransaction(tx);
+            await refreshBlockchain();
+        }
+        async function initAccounts() {
+            if ($("#mask .container").lock()) {
+                return false;
+            }
+            $("#mask").show();
+            const builder = new StellarSdk.TransactionBuilder(config.bank, {
+                fee: config.fee
+            })
+            let  hasTx  = false;
+            if (Number(findBalance(config.platform).balance) > 0) {
+                transfer(builder, config.platform.id, config.bank.id, findBalance(config.platform).balance)
+                hasTx = true;
+            }
+            if (Number(findBalance(config.user).balance) > 0) {
+                transfer(builder, config.user.id, config.bank.id, findBalance(config.user).balance)
+                hasTx = true;
+            }
+            if (Number(findBalance(config.publisher).balance) > 0) {
+                transfer(builder, config.publisher.id, config.bank.id, findBalance(config.publisher).balance)
+                hasTx = true;
+            }
+            if (Number(findBalance(config.share).balance) > 0) {
+                transfer(builder, config.share.id, config.bank.id, findBalance(config.share).balance)
+                hasTx = true;
+            }
+            if (!hasTx) {
+                await refreshBlockchain();
+                return;
+            }
 
+            const tx = builder.setTimeout(100).build();
+            tx.sign(config.bankKey)
+            await config.server.submitTransaction(tx);
+            await refreshBlockchain();
+        }
+        async function refreshBlockchain() {
+            $("#mask .container").lock();
+            $("#mask").show();
+            const [bank, platform, user, publisher, share, history] = await Promise.all([
+                config.server.loadAccount(config.bankKey.publicKey()),
+                config.server.loadAccount(config.platformKey.publicKey()),
+                config.server.loadAccount(config.userKey.publicKey()),
+                config.server.loadAccount(config.publisherKey.publicKey()),
+                config.server.loadAccount(config.shareKey.publicKey()),
+                config.server.operations().forAccount(config.userKey.publicKey()).limit(20).order("desc").call()
+            ]);
+            config.bank = bank;
+            config.platform = platform;
+            config.user = user;
+            config.publisher = publisher;
+            config.share = share;
 
+            $("#platform span").text(findBalance(platform).balance.split(".")[0]);
+            $("#user span").text(findBalance(user).balance.split(".")[0]);
+            $("#publisher span").text(findBalance(publisher).balance.split(".")[0]);
+            $("#share span").text(findBalance(share).balance.split(".")[0]);
+            $("#history").empty();
+            (history.records).forEach(row => {
+                if (row.type == "payment") {
+                    var $div = $("<div/>", {
+                        "class":"history-row",
+                    });
+                    $div.html([
+                        $("<span>", {"class":""}).text('Payment'),
+                        $("<a>", {
+                            "class":"payment-asset",
+                            "href": `https://stellar.expert/explorer/testnet/asset/${row.asset_code}-${row.asset_issuer}`,
+                            "target": "_blank"
+                        }).text(`${row.amount.split(".")[0]} ${row.asset_code}`),
+                        $("<span>", {"class":""}).text('to'),
+                        $("<a>", {
+                            "class":"payment-to",
+                            "href":`https://stellar.expert/explorer/testnet/tx/${row.transaction_hash}`,
+                            "target":"_blank"
+                        }).text(`${row.to.substr(0, 3)}...${row.to.substr(-3, 3)}`),
+                         $("<span>", { "class": "" }).text(moment(row.created_at).fromNow())
+                    ]);
+                    $div.appendTo($("#history"));
+                }
+            })
+            $("#mask .container").unlock();
+            $("#mask").hide();
+        }
 
-        $(document).ready(function () {
-            animation();
-        }, 1000);
+        async function transfer(builder, from, to, amount) {
+            return builder.addOperation(StellarSdk.Operation.payment({
+                amount: amount,
+                destination: to,
+                asset: config.asset,
+                source: from,
+            }))
+        }
+        function findBalance(account) {
+            const balance = account.balances.find(item => {
+                switch (item.asset_type) {
+                    case "credit_alphanum4":
+                    case "credit_alphanum12":
+                        if (item.asset_code == config.asset.code
+                            && item.asset_issuer == config.asset.issuer) {
+                            return true;
+                        }
+                    case "native":
+                        break;
+                }
+                return false;
+            })
+            if (balance && balance.asset_type != "native") {
+                return balance;
+            }
+            return null;
+        }
+
 
         function animation() {
-            var title1 = new TimelineMax();
-            title1.staggerFromTo(".title span", 0.5,
+            const tm1 = new TimelineMax({
+                onComplete: function () {
+                    $("#mask").removeClass("on");
+                }
+            }).staggerFromTo(".title span", 0.5,
                 { ease: Back.easeOut.config(1.7), opacity: 0, bottom: -80 },
                 { ease: Back.easeOut.config(1.7), opacity: 1, bottom: 0 }, 0.05);
         }
