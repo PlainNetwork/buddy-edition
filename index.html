@@ -114,7 +114,7 @@
             vertical-align: top;
             height: 36px;
             line-height: 36px;
-            text-align: center;
+            text-align: right;
             display: inline-block;
             font-weight: bold;
         }
@@ -150,6 +150,10 @@
             -webkit-animation: flash linear 1s infinite;
             animation: flash linear 1s infinite;
         }
+        .withdrawal {
+            display: flex;
+            flex-direction: column;
+        }
         @-webkit-keyframes flash {
             0% { opacity: 0.8; }
             50% { opacity: 0.2; }
@@ -159,6 +163,9 @@
             0% { opacity: 0.8; }
             50% { opacity: 0.2; }
             100% { opacity: 0.8; }
+        }
+        .balance {
+            background-color: rgba(255, 255, 255, 0.2);
         }
         .balance img{
             height: 20px;
@@ -293,11 +300,17 @@
                 </div>
                 <div class="input-group balance" id="publisher">
                     <label>SHARE 1</label>
-                    <label><span></span><img src="http://liquid.plain.network/.well-known/krw.png"></label>
+                    <div class="withdrawal">
+                        <label><span></span><img src="http://liquid.plain.network/.well-known/krw.png"></label>
+                        <button type="button" onclick="withdraw(config.publisher);">WITHDRAW</button>
+                    </div>
                 </div>
                 <div class="input-group balance" id="share">
                     <label>SHARE 2</label>
-                    <label><span></span><img src="http://liquid.plain.network/.well-known/krw.png"></label>
+                    <div class="withdrawal">
+                        <label><span></span><img src="http://liquid.plain.network/.well-known/krw.png"></label>
+                        <button type="button" onclick="withdraw(config.share);">WITHDRAW</button>
+                    </div>
                 </div>
                 <div class="input-group balance" id="platform">
                     <label>PLATFORM</label>
@@ -339,16 +352,16 @@
             config.publisherKey = StellarSdk.Keypair.fromSecret("SC5323USWFN42AZRUN4BOYYJV6H5HQHKGISC7QU5TXXQJESLAKVHO7BH");
             config.shareKey = StellarSdk.Keypair.fromSecret("SCS6YUAAWYIHD7BX3GCJOUNA5ZHD5CT6KIXVWN6HO5Z6GT4NIQXPG2VO");
             config.fee = await config.server.fetchBaseFee();
-            $("#platform").on('click', function () {
+            $("#platform span").on('click', function () {
                 window.open(`https://stellar.expert/explorer/testnet/account/${config.platformKey.publicKey()}`);;
             })
-            $("#user").on('click', function () {
+            $("#user span").on('click', function () {
                 window.open(`https://stellar.expert/explorer/testnet/account/${config.userKey.publicKey()}`);;
             })
-            $("#publisher").on('click', function () {
+            $("#publisher span").on('click', function () {
                 window.open(`https://stellar.expert/explorer/testnet/account/${config.publisherKey.publicKey()}`);;
             })
-            $("#share").on('click', function () {
+            $("#share  span").on('click', function () {
                 window.open(`https://stellar.expert/explorer/testnet/account/${config.shareKey.publicKey()}`);;
             })
             await refreshBlockchain();
@@ -379,6 +392,31 @@
             tx.sign(config.bankKey)
             const response = await config.server.submitTransaction(tx);
             animationMessage(message);
+            await refreshBlockchain();
+        }
+        async function withdraw(from) {
+            if ($("#mask .container").lock()) {
+                return false;
+            }
+            $("#mask").show();
+            const builder = new StellarSdk.TransactionBuilder(config.bank, {
+                fee: config.fee
+            })
+            let hasTx = false;
+            const balance = findBalance(from);
+            const amount = Number(balance.balance);
+            if (amount > 0) {
+                transfer(builder, from.id, config.bank.id, balance.balance)
+                hasTx = true;
+            }
+            if (!hasTx) {
+                await refreshBlockchain();
+                return;
+            }
+            const tx = builder.setTimeout(100).build();
+            tx.sign(config.bankKey)
+            const response = await config.server.submitTransaction(tx);
+            animationMessage(`${amount} KRW to bank account`);
             await refreshBlockchain();
         }
         async function initAccounts() {
