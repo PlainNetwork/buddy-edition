@@ -306,6 +306,9 @@
                 <div class="input-group">
                     <button type="button" onclick="initAccounts()">INITIALIZE</button>
                 </div>
+                <div class="input-group">
+                    <button type="button" onclick="javascript:window.open('./img/interface.jpg');">INTERFACE</button>
+                </div>
             </form>
             <form name="account-demo-3" class="">
                 <div id="message"></div>
@@ -379,6 +382,9 @@
             await refreshBlockchain();
         }
         async function initAccounts() {
+            if (!confirm("Are you sure all accounts set to zero?")) {
+                return;
+            }
             if ($("#mask .container").lock()) {
                 return false;
             }
